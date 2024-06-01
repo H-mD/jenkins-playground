@@ -42,8 +42,13 @@ pipeline {
      post {
         success {
             script {
-                withCredentials([string(credentialsId: 'discord-webhook', variable: 'DISCORD_WEBHOOK_URL')]) {
-                    discordSend description: 'Deployment Successful', 
+                def commitMessage = sh(script: 'git log -1 --pretty=%B', returnStdout: true).trim()
+
+                withCredentials([
+                    string(credentialsId: 'discord-webhook', variable: 'DISCORD_WEBHOOK_URL'),
+                    string(credentialsId: 'deployment-url', variable: 'DEPLOYMENT_URL')
+                ]) {
+                    discordSend description: "Deployment Successful to ${DEPLOYMENT_URL}\nLatest commit message: ${commitMessage}", 
                                 footer: 'Jenkins CI/CD', 
                                 link: env.BUILD_URL, 
                                 result: currentBuild.currentResult, 
