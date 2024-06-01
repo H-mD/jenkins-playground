@@ -4,6 +4,11 @@ pipeline {
         pollSCM '* * * * *'
     }
     stages {
+        stage('Workspace Cleanup') {
+            steps {
+                cleanWs()
+            }
+        }
         stage('Checkout') {
             steps {
                 checkout scm
